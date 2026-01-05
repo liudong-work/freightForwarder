@@ -1,0 +1,26 @@
+==========================================
+服务器端一键执行命令（复制全部执行）
+==========================================
+
+ssh root@182.92.59.70
+
+# 然后执行以下所有命令：
+
+curl -fsSL https://rpm.nodesource.com/setup_18.x | bash - && yum install -y nodejs && npm install -g pm2 serve && docker run -d --name mongodb -p 27017:27017 --restart=always mongo:latest || docker start mongodb && mkdir -p /opt/wladmin/{frontend,backend,logs} && firewall-cmd --permanent --add-port=3004/tcp && firewall-cmd --permanent --add-port=3002/tcp && firewall-cmd --reload && echo "环境配置完成"
+
+==========================================
+本地上传命令（在新终端执行）
+==========================================
+
+cd /Users/liudong/Desktop/myGitProgect/wladmin
+scp -r dist/* root@182.92.59.70:/opt/wladmin/frontend/
+scp -r server/* root@182.92.59.70:/opt/wladmin/backend/
+scp deploy/ecosystem.config.js root@182.92.59.70:/opt/wladmin/
+
+==========================================
+服务器启动命令（在服务器上执行）
+==========================================
+
+cd /opt/wladmin/backend && npm install --production && cd /opt/wladmin && pm2 start ecosystem.config.js && pm2 save && pm2 list
+
+==========================================

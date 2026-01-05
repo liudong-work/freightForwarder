@@ -1,0 +1,39 @@
+==========================================
+🚀 立即部署 - 复制执行
+==========================================
+
+第一步：连接服务器
+-------------------
+ssh root@182.92.59.70
+密码: ryg@893012
+
+
+第二步：在服务器上执行（复制全部）
+-------------------
+curl -fsSL https://rpm.nodesource.com/setup_18.x | bash - && yum install -y nodejs && npm install -g pm2 serve && docker run -d --name mongodb -p 27017:27017 --restart=always mongo:latest || docker start mongodb && mkdir -p /opt/wladmin/{frontend,backend,logs} && firewall-cmd --permanent --add-port=3004/tcp && firewall-cmd --permanent --add-port=3002/tcp && firewall-cmd --reload && echo "✅ 环境配置完成"
+
+
+第三步：上传文件（在本地新终端执行）
+-------------------
+cd /Users/liudong/Desktop/myGitProgect/wladmin
+
+scp -r dist/* root@182.92.59.70:/opt/wladmin/frontend/
+scp -r server/* root@182.92.59.70:/opt/wladmin/backend/
+scp deploy/ecosystem.config.js root@182.92.59.70:/opt/wladmin/
+
+每次输入密码: ryg@893012
+
+
+第四步：在服务器上启动（回到SSH会话）
+-------------------
+cd /opt/wladmin/backend && npm install --production && cd /opt/wladmin && pm2 start ecosystem.config.js && pm2 save && pm2 list
+
+
+第五步：配置阿里云安全组
+-------------------
+1. 登录阿里云控制台
+2. ECS -> 安全组 -> 配置规则
+3. 添加端口 3004 和 3002
+
+
+✅ 完成！访问: http://182.92.59.70:3004
