@@ -182,10 +182,10 @@ router.post('/import', upload.single('file'), async (req, res) => {
     
     // 检查文件类型
     const fileExtension = req.file.originalname.split('.').pop().toLowerCase()
-    if (!['xlsx', 'xls'].includes(fileExtension)) {
+    if (!['xlsx', 'xls', 'xltx'].includes(fileExtension)) {
       return res.status(400).json({
         code: 400,
-        message: '只支持Excel文件格式（.xlsx, .xls）'
+        message: '只支持Excel文件格式（.xlsx, .xls, .xltx）'
       })
     }
     

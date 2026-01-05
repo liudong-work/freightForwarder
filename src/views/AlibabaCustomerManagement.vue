@@ -6,7 +6,7 @@
         <a-upload
           :before-upload="handleImport"
           :show-upload-list="false"
-          accept=".xlsx,.xls"
+          accept=".xlsx,.xls,.xltx"
         >
           <template #icon>
             <UploadOutlined />
@@ -766,8 +766,8 @@ const handleImport = async (file) => {
     const fileName = file.name || ''
     const fileExtension = fileName.split('.').pop()?.toLowerCase()
     
-    if (!fileExtension || !['xlsx', 'xls'].includes(fileExtension)) {
-      message.error('只支持Excel文件格式（.xlsx 或 .xls）')
+    if (!fileExtension || !['xlsx', 'xls', 'xltx'].includes(fileExtension)) {
+      message.error('只支持Excel文件格式（.xlsx、.xls 或 .xltx）')
       return false
     }
     
@@ -919,65 +919,14 @@ const handleImport = async (file) => {
         return cleaned
       }
       
-      // 直接从单元格读取文本值，避免乱码问题
-      // 这样能确保读取到正确的文本内容，而不是格式化后的值
-      const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1')
-      const jsonData = []
-      
-      // 辅助函数：从单元格提取纯文本值
-      const extractCellText = (cell) => {
-        if (!cell) return ''
-        
-        let cellValue = ''
-        
-        // 策略1: 优先使用 w 属性（文本值）
-        if (cell.w !== undefined && cell.w !== null) {
-          cellValue = String(cell.w)
-          // 如果 w 属性包含HTML标签，尝试清理
-          if (cellValue.includes('<') || cellValue.includes('/td>')) {
-            // 先尝试清理HTML
-            let cleaned = cleanText(cellValue)
-            // 如果清理后还有问题，尝试从 v 属性获取
-            if (cleaned.includes('/td>') || cleaned.length === 0) {
-              if (cell.v !== undefined && cell.v !== null) {
-                if (cell.v instanceof Date) {
-                  cellValue = cell.v.toLocaleString('zh-CN')
-                } else {
-                  cellValue = String(cell.v)
-                }
-              }
-            } else {
-              cellValue = cleaned
-            }
-          }
-        } 
-        // 策略2: 如果没有 w 或 w 有问题，使用 v 属性（原始值）
-        else if (cell.v !== undefined && cell.v !== null) {
-          if (cell.v instanceof Date) {
-            cellValue = cell.v.toLocaleString('zh-CN')
-          } else {
-            cellValue = String(cell.v)
-          }
-        }
-        
-        // 最终清理：确保没有HTML标签和乱码
-        if (cellValue) {
-          cellValue = cleanText(cellValue)
-        }
-        
-        return cellValue
-      }
-      
-      for (let R = range.s.r; R <= range.e.r; R++) {
-        const row = []
-        for (let C = range.s.c; C <= range.e.c; C++) {
-          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C })
-          const cell = worksheet[cellAddress]
-          const cellValue = extractCellText(cell)
-          row.push(cellValue)
-        }
-        jsonData.push(row)
-      }
+      // 使用 sheet_to_json 读取数据（与后端保持一致，能更好地处理编码）
+      // 这个方法会自动处理编码问题，比逐个单元格读取更可靠
+      const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+        header: 1, // 返回数组格式，第一行是表头
+        defval: '', // 默认值
+        raw: false, // 使用格式化的文本值，而不是原始值
+        dateNF: 'yyyy-mm-dd' // 日期格式
+      })
       
       console.log('📋 直接从单元格读取的数据（前3行）:', jsonData.slice(0, 3))
       
