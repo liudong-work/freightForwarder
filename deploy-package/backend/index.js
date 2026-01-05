@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import { connectDB } from './config/database.js'
 import userRoutes from './routes/user.js'
 import authRoutes from './routes/auth.js'
+import alibabaCustomerRoutes from './routes/alibabaCustomer.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -25,7 +26,8 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/api/health',
       auth: '/api/auth',
-      users: '/api/users'
+      users: '/api/users',
+      alibabaCustomers: '/api/alibaba-customers'
     }
   })
 })
@@ -33,6 +35,7 @@ app.get('/', (req, res) => {
 // 路由
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/alibaba-customers', alibabaCustomerRoutes)
 
 // 健康检查
 app.get('/api/health', (req, res) => {
