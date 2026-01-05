@@ -36,17 +36,6 @@
         >
           返回数据库模式
         </a-button>
-        <a-button 
-          v-if="!isExcelMode && pagination.total > 0"
-          type="default"
-          danger
-          @click="handleDeleteAll"
-        >
-          <template #icon>
-            <DeleteOutlined />
-          </template>
-          一键清空（测试用）
-        </a-button>
         <a-button v-if="!isExcelMode" type="primary" @click="handleAdd">
           <template #icon>
             <PlusOutlined />
@@ -277,7 +266,6 @@ import {
   updateAlibabaCustomer, 
   deleteAlibabaCustomer, 
   deleteAlibabaCustomers,
-  deleteAllAlibabaCustomers,
   importAlibabaCustomers 
 } from '@/api/alibabaCustomer'
 import { formatDate } from '@/utils/format'
@@ -656,29 +644,6 @@ const handleBatchDelete = () => {
   })
 }
 
-// 一键清空所有数据（测试用）
-const handleDeleteAll = () => {
-  Modal.confirm({
-    title: '⚠️ 危险操作',
-    content: `确定要删除所有客户数据吗？共 ${pagination.total} 条数据，此操作不可恢复！`,
-    okText: '确定删除',
-    cancelText: '取消',
-    okType: 'danger',
-    onOk: async () => {
-      try {
-        loading.value = true
-        const res = await deleteAllAlibabaCustomers()
-        message.success(res.message || `成功删除所有客户，共 ${res.data?.deletedCount || 0} 条`)
-        selectedRowKeys.value = []
-        loadUserList()
-      } catch (error) {
-        message.error(error.message || '删除失败')
-      } finally {
-        loading.value = false
-      }
-    }
-  })
-}
 
 // 提交表单
 const handleSubmit = async () => {
