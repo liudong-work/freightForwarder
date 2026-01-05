@@ -6,6 +6,7 @@ import userRoutes from './routes/user.js'
 import authRoutes from './routes/auth.js'
 import alibabaCustomerRoutes from './routes/alibabaCustomer.js'
 import amazonCustomerRoutes from './routes/amazonCustomer.js'
+import marketingAccountCustomerRoutes from './routes/marketingAccountCustomer.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -29,7 +30,8 @@ app.get('/', (req, res) => {
       auth: '/api/auth',
       users: '/api/users',
       alibabaCustomers: '/api/alibaba-customers',
-      amazonCustomers: '/api/amazon-customers'
+      amazonCustomers: '/api/amazon-customers',
+      marketingAccountCustomers: '/api/marketing-account-customers'
     }
   })
 })
@@ -39,6 +41,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/alibaba-customers', alibabaCustomerRoutes)
 app.use('/api/amazon-customers', amazonCustomerRoutes)
+app.use('/api/marketing-account-customers', marketingAccountCustomerRoutes)
 
 // 健康检查
 app.get('/api/health', (req, res) => {

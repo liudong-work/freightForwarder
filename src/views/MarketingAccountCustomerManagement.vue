@@ -1,7 +1,7 @@
 <template>
   <div class="customer-management">
     <div class="page-header">
-      <h2>阿里巴巴客户管理</h2>
+      <h2>营销号客户管理</h2>
       <a-space>
         <a-button type="default" @click="handleDownloadTemplate">
           <template #icon>
@@ -54,18 +54,18 @@
     <!-- 搜索栏 -->
     <div class="search-bar">
       <a-form layout="inline" :model="searchForm">
-        <a-form-item label="客户名称">
+        <a-form-item label="公司名称">
           <a-input
-            v-model:value="searchForm.username"
-            placeholder="请输入客户名称"
+            v-model:value="searchForm.companyName"
+            placeholder="请输入公司名称"
             allow-clear
             style="width: 200px"
           />
         </a-form-item>
-        <a-form-item label="手机号">
+        <a-form-item label="联系方式">
           <a-input
-            v-model:value="searchForm.phone"
-            placeholder="请输入手机号"
+            v-model:value="searchForm.contactMethod"
+            placeholder="请输入联系方式"
             allow-clear
             style="width: 200px"
           />
@@ -167,28 +167,59 @@
         :label-col="{ span: 6 }"
         :wrapper-col="{ span: 18 }"
       >
-        <a-form-item label="客户名称" name="username">
+        <a-form-item label="ID" name="excelId">
           <a-input
-            v-model:value="formData.username"
-            placeholder="请输入客户名称（与公司名称至少填一个）"
+            v-model:value="formData.excelId"
+            placeholder="请输入ID"
           />
         </a-form-item>
-        <a-form-item label="电话" name="phone">
+        <a-form-item label="来源" name="source">
           <a-input
-            v-model:value="formData.phone"
-            placeholder="请输入电话"
+            v-model:value="formData.source"
+            placeholder="请输入来源"
           />
         </a-form-item>
-        <a-form-item label="公司名称" name="company">
+        <a-form-item label="关键词" name="keyword">
           <a-input
-            v-model:value="formData.company"
-            placeholder="请输入公司名称（与客户名称至少填一个）"
+            v-model:value="formData.keyword"
+            placeholder="请输入关键词"
           />
         </a-form-item>
-        <a-form-item label="阿里巴巴店铺名称" name="alibabaStore">
+        <a-form-item label="公司名称" name="companyName">
           <a-input
-            v-model:value="formData.alibabaStore"
-            placeholder="请输入阿里巴巴店铺名称"
+            v-model:value="formData.companyName"
+            placeholder="请输入公司名称"
+          />
+        </a-form-item>
+        <a-form-item label="商店名称" name="storeName">
+          <a-input
+            v-model:value="formData.storeName"
+            placeholder="请输入商店名称"
+          />
+        </a-form-item>
+        <a-form-item label="店铺链接" name="storeLink">
+          <a-input
+            v-model:value="formData.storeLink"
+            placeholder="请输入店铺链接"
+          />
+        </a-form-item>
+        <a-form-item label="联系人" name="contactPerson">
+          <a-input
+            v-model:value="formData.contactPerson"
+            placeholder="请输入联系人"
+          />
+        </a-form-item>
+        <a-form-item label="联系方式" name="contactMethod">
+          <a-input
+            v-model:value="formData.contactMethod"
+            placeholder="请输入联系方式"
+          />
+        </a-form-item>
+        <a-form-item label="地址" name="address">
+          <a-textarea
+            v-model:value="formData.address"
+            placeholder="请输入地址"
+            :rows="2"
           />
         </a-form-item>
         <a-form-item label="合作状态" name="status">
@@ -228,17 +259,35 @@
         </template>
         <template v-else>
           <!-- 数据库模式：展示标准字段 -->
-          <a-descriptions-item label="客户名称">
-            {{ currentUser.username }}
+          <a-descriptions-item label="ID">
+            {{ currentUser.excelId || '无' }}
           </a-descriptions-item>
-          <a-descriptions-item label="电话">
-            {{ currentUser.phone }}
+          <a-descriptions-item label="来源">
+            {{ currentUser.source || '无' }}
+          </a-descriptions-item>
+          <a-descriptions-item label="关键词">
+            {{ currentUser.keyword || '无' }}
           </a-descriptions-item>
           <a-descriptions-item label="公司名称">
-            {{ currentUser.company }}
+            {{ currentUser.companyName || '无' }}
           </a-descriptions-item>
-          <a-descriptions-item label="阿里巴巴店铺名称">
-            {{ currentUser.alibabaStore || '无' }}
+          <a-descriptions-item label="商店名称">
+            {{ currentUser.storeName || '无' }}
+          </a-descriptions-item>
+          <a-descriptions-item label="店铺链接">
+            <a :href="currentUser.storeLink" target="_blank" v-if="currentUser.storeLink">
+              {{ currentUser.storeLink }}
+            </a>
+            <span v-else>无</span>
+          </a-descriptions-item>
+          <a-descriptions-item label="联系人">
+            {{ currentUser.contactPerson || '无' }}
+          </a-descriptions-item>
+          <a-descriptions-item label="联系方式">
+            {{ currentUser.contactMethod || '无' }}
+          </a-descriptions-item>
+          <a-descriptions-item label="地址" :span="2">
+            {{ currentUser.address || '无' }}
           </a-descriptions-item>
           <a-descriptions-item label="合作状态">
             <a-tag :color="getStatusColor(currentUser.status)">
@@ -268,56 +317,42 @@ import {
   DownloadOutlined
 } from '@ant-design/icons-vue'
 import { 
-  getAlibabaCustomerList, 
-  createAlibabaCustomer, 
-  updateAlibabaCustomer, 
-  deleteAlibabaCustomer, 
-  deleteAlibabaCustomers,
-  importAlibabaCustomers 
-} from '@/api/alibabaCustomer'
+  getMarketingAccountCustomerList, 
+  createMarketingAccountCustomer, 
+  updateMarketingAccountCustomer, 
+  deleteMarketingAccountCustomer, 
+  deleteMarketingAccountCustomers,
+  importMarketingAccountCustomers 
+} from '@/api/marketingAccountCustomer'
 import { formatDate } from '@/utils/format'
 import * as XLSX from 'xlsx'
 
 // 固定的中文表头
 const excelFixedHeaders = [
+  'ID',
   '来源',
   '关键词',
-  '公司名',
+  '公司名称',
+  '商店名称',
   '店铺链接',
-  '入驻年数',
-  '主营产品',
-  '销量',
-  '销售额',
-  '热销市场',
-  '国家',
-  '省份',
-  '城市',
   '联系人',
-  '电话',
-  '手机',
-  '传真',
-  '公司地址'
+  '联系方式',
+  '地址'
 ]
 
 // 根据固定表头生成表格列
 const generateColumnsFromHeaders = (headers) => {
-  // 先添加ID列
-  const cols = [{
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-    width: 80,
-    fixed: 'left'
-  }]
+  const cols = []
   
-  // 添加Excel固定表头列
+  // 添加Excel固定表头列（ID已经包含在headers中，不需要单独添加）
   headers.forEach((header, index) => {
     cols.push({
       title: header,
       dataIndex: `col_${index}`,
       key: `col_${index}`,
-      width: 150,
-      ellipsis: true
+      width: header === 'ID' ? 80 : 150,
+      ellipsis: true,
+      fixed: header === 'ID' ? 'left' : false
     })
   })
   
@@ -349,8 +384,8 @@ const excelHeaders = ref([]) // Excel表头
 
 // 搜索表单
 const searchForm = reactive({
-  username: '',
-  phone: '',
+  companyName: '',
+  contactMethod: '',
   status: undefined
 })
 
@@ -360,34 +395,17 @@ const formData = reactive({
   username: '',
   phone: '',
   company: '',
-  alibabaStore: '',
+  amazonStore: '',
   status: 'active',
   remark: ''
 })
 
 // 表单验证规则
 const rules = {
-  username: [
+  companyName: [
     { 
-      validator: (rule, value, callback) => {
-        if (!value && !formData.company) {
-          callback(new Error('至少需要填写客户名称或公司名称之一'))
-        } else {
-          callback()
-        }
-      }, 
-      trigger: 'blur' 
-    }
-  ],
-  company: [
-    { 
-      validator: (rule, value, callback) => {
-        if (!value && !formData.username) {
-          callback(new Error('至少需要填写客户名称或公司名称之一'))
-        } else {
-          callback()
-        }
-      }, 
+      required: true,
+      message: '请输入公司名称',
       trigger: 'blur' 
     }
   ]
@@ -409,11 +427,11 @@ const loadUserList = async () => {
     const params = {
       page: pagination.current,
       pageSize: pagination.pageSize,
-      companyName: searchForm.username, // 使用companyName搜索
-      phone: searchForm.phone,
+      companyName: searchForm.companyName,
+      phone: searchForm.contactMethod, // 使用contactMethod搜索
       status: searchForm.status
     }
-    const res = await getAlibabaCustomerList(params)
+    const res = await getMarketingAccountCustomerList(params)
     if (res && res.data) {
       // 将数据库数据转换为表格显示格式
       customerList.value = (res.data.list || []).map(customer => {
@@ -423,35 +441,26 @@ const loadUserList = async () => {
           excelId: customer.excelId || '', // Excel ID作为单独字段保存
           _rowIndex: customer.excelRowIndex || null
         }
-        // 映射15个固定字段
+        // 映射9个固定字段
         excelFixedHeaders.forEach((header, index) => {
           const fieldMap = {
+            'ID': 'excelId',
             '来源': 'source',
             '关键词': 'keyword',
-            '公司名': 'companyName',
+            '公司名称': 'companyName',
+            '商店名称': 'storeName',
             '店铺链接': 'storeLink',
-            '入驻年数': 'yearsInBusiness',
-            '主营产品': 'mainProducts',
-            '销量': 'sales',
-            '销售额': 'salesVolume',
-            '热销市场': 'hotMarket',
-            '国家': 'country',
-            '省份': 'province',
-            '城市': 'city',
             '联系人': 'contactPerson',
-            '电话': 'phone',
-            '手机': 'mobile',
-            '传真': 'fax',
-            '公司地址': 'companyAddress'
+            '联系方式': 'contactMethod',
+            '地址': 'address'
           }
           const fieldName = fieldMap[header]
           rowData[`col_${index}`] = customer[fieldName] || ''
+          // 同时保存到对应的字段名，方便编辑时使用
+          if (fieldName) {
+            rowData[fieldName] = customer[fieldName] || ''
+          }
         })
-        // 映射表单需要的字段（用于编辑功能）
-        rowData.username = customer.companyName || '' // 客户名称使用公司名
-        rowData.company = customer.companyName || '' // 公司名称
-        rowData.alibabaStore = customer.storeLink || '' // 阿里巴巴店铺链接
-        rowData.phone = customer.phone || '' // 电话
         rowData.status = customer.status || 'pending' // 状态
         rowData.remark = customer.remark || '' // 备注
         return rowData
@@ -480,8 +489,8 @@ const handleSearch = () => {
 
 // 重置搜索
 const handleReset = () => {
-  searchForm.username = ''
-  searchForm.phone = ''
+  searchForm.companyName = ''
+  searchForm.contactMethod = ''
   searchForm.status = undefined
   pagination.current = 1
   if (isExcelMode.value) {
@@ -514,7 +523,7 @@ const handleDownloadTemplate = () => {
     XLSX.utils.book_append_sheet(wb, ws, '客户数据')
     
     // 生成文件名（带时间戳）
-    const fileName = `阿里巴巴客户导入模板_${new Date().toISOString().slice(0, 10)}.xlsx`
+    const fileName = `营销号客户导入模板_${new Date().toISOString().slice(0, 10)}.xlsx`
     
     // 下载文件
     XLSX.writeFile(wb, fileName)
@@ -555,12 +564,17 @@ const handleAdd = () => {
 const handleEdit = (record) => {
   modalTitle.value = '编辑客户'
   Object.assign(formData, {
-    id: record.id,
-    username: record.username,
-    phone: record.phone,
-    company: record.company,
-    alibabaStore: record.alibabaStore || '',
-    status: record.status,
+    id: record.id || record._id,
+    excelId: record.excelId || '',
+    source: record.source || '',
+    keyword: record.keyword || '',
+    companyName: record.companyName || '',
+    storeName: record.storeName || '',
+    storeLink: record.storeLink || '',
+    contactPerson: record.contactPerson || '',
+    contactMethod: record.contactMethod || '',
+    address: record.address || '',
+    status: record.status || 'pending',
     remark: record.remark || ''
   })
   modalVisible.value = true
@@ -606,7 +620,7 @@ const handleDelete = async (record) => {
       // 去除可能的空格
       deleteId = deleteId.trim()
       
-      await deleteAlibabaCustomer(deleteId)
+      await deleteMarketingAccountCustomer(deleteId)
       message.success('删除成功')
       const index = selectedRowKeys.value.indexOf(deleteId)
       if (index > -1) {
@@ -672,7 +686,7 @@ const handleBatchDelete = () => {
             return
           }
           
-          const res = await deleteAlibabaCustomers(idsToDelete)
+          const res = await deleteMarketingAccountCustomers(idsToDelete)
           message.success(res.message || `成功删除 ${idsToDelete.length} 个客户`)
           selectedRowKeys.value = []
           loadUserList()
@@ -690,25 +704,26 @@ const handleBatchDelete = () => {
 // 提交表单
 const handleSubmit = async () => {
   try {
-    if (!formData.username && !formData.company) {
-      message.error('至少需要填写客户名称或公司名称之一')
-      return
-    }
-    
     await formRef.value.validate()
     // 将表单数据映射到数据库字段
     const submitData = {
-      companyName: formData.company || formData.username || '',
-      phone: formData.phone || '',
+      excelId: formData.excelId || '',
+      source: formData.source || '',
+      keyword: formData.keyword || '',
+      companyName: formData.companyName || '',
+      storeName: formData.storeName || '',
+      storeLink: formData.storeLink || '',
+      contactPerson: formData.contactPerson || '',
+      contactMethod: formData.contactMethod || '',
+      address: formData.address || '',
       status: formData.status || 'pending',
-      remark: formData.remark || '',
-      storeLink: formData.alibabaStore || '' // 表单字段alibabaStore映射到数据库字段storeLink
+      remark: formData.remark || ''
     }
     if (formData.id) {
-      await updateAlibabaCustomer(formData.id, submitData)
+      await updateMarketingAccountCustomer(formData.id, submitData)
       message.success('更新成功')
     } else {
-      await createAlibabaCustomer(submitData)
+      await createMarketingAccountCustomer(submitData)
       message.success('创建成功')
     }
     modalVisible.value = false
@@ -731,10 +746,15 @@ const handleCancel = () => {
 const resetForm = () => {
   Object.assign(formData, {
     id: null,
-    username: '',
-    phone: '',
-    company: '',
-    alibabaStore: '',
+    excelId: '',
+    source: '',
+    keyword: '',
+    companyName: '',
+    storeName: '',
+    storeLink: '',
+    contactPerson: '',
+    contactMethod: '',
+    address: '',
     status: 'active',
     remark: ''
   })
@@ -1018,23 +1038,15 @@ const handleImport = async (file) => {
       
       // 字段映射关系（Excel表头 -> 数据库字段）
       const fieldMap = {
+        'ID': 'excelId',
         '来源': 'source',
         '关键词': 'keyword',
-        '公司名': 'companyName',
+        '公司名称': 'companyName',
+        '商店名称': 'storeName',
         '店铺链接': 'storeLink',
-        '入驻年数': 'yearsInBusiness',
-        '主营产品': 'mainProducts',
-        '销量': 'sales',
-        '销售额': 'salesVolume',
-        '热销市场': 'hotMarket',
-        '国家': 'country',
-        '省份': 'province',
-        '城市': 'city',
         '联系人': 'contactPerson',
-        '电话': 'phone',
-        '手机': 'mobile',
-        '传真': 'fax',
-        '公司地址': 'companyAddress'
+        '联系方式': 'contactMethod',
+        '地址': 'address'
       }
       
       // 转换数据格式：从第二行开始读取数据（第一行是表头）
@@ -1100,7 +1112,7 @@ const handleImport = async (file) => {
       // 导入到数据库
       try {
         loading.value = true
-        const res = await importAlibabaCustomers(file)
+        const res = await importMarketingAccountCustomers(file)
         if (res && res.data) {
           const { success, failed, total } = res.data
           if (success > 0) {

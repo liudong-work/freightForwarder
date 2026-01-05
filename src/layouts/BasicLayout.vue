@@ -35,6 +35,9 @@
           <a-menu-item key="/alibaba-customers">
             <span>阿里巴巴客户管理</span>
           </a-menu-item>
+          <a-menu-item key="/marketing-account-customers">
+            <span>营销号客户</span>
+          </a-menu-item>
         </a-sub-menu>
         <a-menu-item key="/orders">
           <template #icon>
@@ -155,6 +158,7 @@ const handleMenuClick = ({ key }) => {
     '/customers': '客户管理',
     '/amazon-customers': '亚马逊客户管理',
     '/alibaba-customers': '阿里巴巴客户管理',
+    '/marketing-account-customers': '营销号客户',
     '/orders': '订单管理',
     '/logistics': '物流管理',
     '/settings': '系统设置'
@@ -166,6 +170,8 @@ const handleMenuClick = ({ key }) => {
     router.push('/amazon-customers')
   } else if (key === '/alibaba-customers') {
     router.push('/alibaba-customers')
+  } else if (key === '/marketing-account-customers') {
+    router.push('/marketing-account-customers')
   } else if (key === '/settings') {
     router.push('/settings')
   } else {

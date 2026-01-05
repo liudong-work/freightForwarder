@@ -4,6 +4,7 @@ import Login from '@/views/Login.vue'
 import UserManagement from '@/views/UserManagement.vue'
 import AmazonCustomerManagement from '@/views/AmazonCustomerManagement.vue'
 import AlibabaCustomerManagement from '@/views/AlibabaCustomerManagement.vue'
+import MarketingAccountCustomerManagement from '@/views/MarketingAccountCustomerManagement.vue'
 import Settings from '@/views/Settings.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -49,6 +50,15 @@ const routes = [
         component: AlibabaCustomerManagement,
         meta: {
           title: '阿里巴巴客户管理',
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/marketing-account-customers',
+        name: 'MarketingAccountCustomerManagement',
+        component: MarketingAccountCustomerManagement,
+        meta: {
+          title: '营销号客户',
           requiresAuth: true
         }
       },

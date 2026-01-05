@@ -3,6 +3,12 @@
     <div class="page-header">
       <h2>亚马逊客户管理</h2>
       <a-space>
+        <a-button type="default" @click="handleDownloadTemplate">
+          <template #icon>
+            <DownloadOutlined />
+          </template>
+          下载模板
+        </a-button>
         <a-upload
           :before-upload="handleImport"
           :show-upload-list="false"
@@ -307,7 +313,8 @@ import {
   PlusOutlined,
   SearchOutlined,
   UploadOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  DownloadOutlined
 } from '@ant-design/icons-vue'
 import { 
   getAmazonCustomerList, 
@@ -490,6 +497,41 @@ const handleReset = () => {
     handleResetToNormalMode()
   } else {
     loadUserList()
+  }
+}
+
+// 下载Excel模板
+const handleDownloadTemplate = () => {
+  try {
+    // 创建工作簿
+    const wb = XLSX.utils.book_new()
+    
+    // 创建表头行
+    const headerRow = excelFixedHeaders
+    
+    // 创建工作表数据（只有表头，没有数据行）
+    const wsData = [headerRow]
+    
+    // 创建工作表
+    const ws = XLSX.utils.aoa_to_sheet(wsData)
+    
+    // 设置列宽
+    const colWidths = excelFixedHeaders.map(() => ({ wch: 15 }))
+    ws['!cols'] = colWidths
+    
+    // 添加工作表到工作簿
+    XLSX.utils.book_append_sheet(wb, ws, '客户数据')
+    
+    // 生成文件名（带时间戳）
+    const fileName = `亚马逊客户导入模板_${new Date().toISOString().slice(0, 10)}.xlsx`
+    
+    // 下载文件
+    XLSX.writeFile(wb, fileName)
+    
+    message.success('模板下载成功')
+  } catch (error) {
+    console.error('下载模板失败:', error)
+    message.error('下载模板失败，请重试')
   }
 }
 
