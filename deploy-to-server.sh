@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 部署脚本 - 保留用户数据，删除阿里巴巴客户数据
+# 部署脚本 - 保留所有数据库数据
 # 服务器: root@服务器IP
 # 密码: ryg@893012
 
@@ -12,7 +12,7 @@ API_PORT="3001"
 
 echo "=========================================="
 echo "部署到服务器: $SERVER_IP"
-echo "保留用户数据，删除阿里巴巴客户数据"
+echo "保留所有数据库数据"
 echo "=========================================="
 echo ""
 
@@ -132,10 +132,7 @@ pm2 start config/ecosystem.config.js
 # 等待后端启动
 sleep 3
 
-# 删除阿里巴巴客户数据（保留用户数据）
-echo "删除阿里巴巴客户数据..."
-cd /opt/wladmin/backend
-node scripts/clearAlibabaCustomers.js
+# 注意：保留所有数据库数据，不执行任何数据清理操作
 
 # 保存PM2配置
 pm2 save

@@ -4,4 +4,6 @@ dist
 *.log
 .env.local
 .env.*.local
+deploy-package/
+wladmin-deploy.tar.gz
 
