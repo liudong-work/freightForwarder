@@ -18,12 +18,6 @@
           </template>
           <span>仪表板</span>
         </a-menu-item>
-        <a-menu-item key="/customers">
-          <template #icon>
-            <TeamOutlined />
-          </template>
-          <span>客户管理</span>
-        </a-menu-item>
         <a-sub-menu key="/platform-customers">
           <template #icon>
             <ShopOutlined />
@@ -39,6 +33,12 @@
             <span>营销号客户</span>
           </a-menu-item>
         </a-sub-menu>
+        <a-menu-item key="/map-data">
+          <template #icon>
+            <GlobalOutlined />
+          </template>
+          <span>map数据</span>
+        </a-menu-item>
         <a-menu-item key="/orders">
           <template #icon>
             <FileTextOutlined />
@@ -117,7 +117,6 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  TeamOutlined,
   FileTextOutlined,
   CarOutlined,
   SettingOutlined,
@@ -138,10 +137,7 @@ const openKeys = ref([])
 watch(
   () => route.path,
   (path) => {
-    // 将 /users 映射到 /customers
-    if (path === '/users') {
-      selectedKeys.value = ['/customers']
-    } else if (path === '/amazon-customers' || path === '/alibaba-customers') {
+    if (path === '/amazon-customers' || path === '/alibaba-customers' || path === '/marketing-account-customers') {
       selectedKeys.value = [path]
       openKeys.value = ['/platform-customers']
     } else {
@@ -155,17 +151,19 @@ watch(
 const handleMenuClick = ({ key }) => {
   const menuMap = {
     '/dashboard': '仪表板',
-    '/customers': '客户管理',
     '/amazon-customers': '亚马逊客户管理',
     '/alibaba-customers': '阿里巴巴客户管理',
     '/marketing-account-customers': '营销号客户',
+    '/map-data': 'map数据',
     '/orders': '订单管理',
     '/logistics': '物流管理',
     '/settings': '系统设置'
   }
   
-  if (key === '/customers') {
-    router.push('/users')
+  if (key === '/dashboard') {
+    router.push('/dashboard')
+  } else if (key === '/map-data') {
+    router.push('/map-data')
   } else if (key === '/amazon-customers') {
     router.push('/amazon-customers')
   } else if (key === '/alibaba-customers') {
@@ -175,8 +173,8 @@ const handleMenuClick = ({ key }) => {
   } else if (key === '/settings') {
     router.push('/settings')
   } else {
-    // 其他菜单项暂时跳转到客户管理页面
-    router.push('/users')
+    // 其他菜单项暂时跳转到仪表板页面
+    router.push('/dashboard')
     message.info(`${menuMap[key] || '功能'}开发中...`)
   }
 }

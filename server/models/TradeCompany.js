@@ -13,6 +13,14 @@ const tradeCompanySchema = new mongoose.Schema({
     trim: true,
     default: ''
   },
+  city: {
+    type: String,
+    required: false,
+    trim: true,
+    default: '',
+    index: true,
+    comment: '城市'
+  },
   phone: {
     type: String,
     required: false,

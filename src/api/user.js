@@ -88,7 +88,8 @@ export function importUsers(file) {
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    timeout: 60000 // 文件上传超时时间60秒
   })
 }
 

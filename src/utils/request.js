@@ -19,7 +19,7 @@ const getBaseURL = () => {
 // 创建 axios 实例
 const service = axios.create({
   baseURL: getBaseURL(),
-  timeout: 15000 // 增加到15秒，避免数据库查询超时
+  timeout: 60000 // 增加到60秒，避免大文件上传超时
 })
 
 // 请求拦截器

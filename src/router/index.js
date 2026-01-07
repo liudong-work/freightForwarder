@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/layouts/BasicLayout.vue'
 import Login from '@/views/Login.vue'
-import UserManagement from '@/views/UserManagement.vue'
+import Dashboard from '@/views/Dashboard.vue'
 import AmazonCustomerManagement from '@/views/AmazonCustomerManagement.vue'
 import AlibabaCustomerManagement from '@/views/AlibabaCustomerManagement.vue'
 import MarketingAccountCustomerManagement from '@/views/MarketingAccountCustomerManagement.vue'
+import MapData from '@/views/MapData.vue'
 import Settings from '@/views/Settings.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -21,17 +22,17 @@ const routes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/users',
+    redirect: '/dashboard',
     meta: {
       requiresAuth: true
     },
     children: [
       {
-        path: '/users',
-        name: 'UserManagement',
-        component: UserManagement,
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: Dashboard,
         meta: {
-          title: '客户管理',
+          title: '仪表板',
           requiresAuth: true
         }
       },
@@ -63,6 +64,15 @@ const routes = [
         }
       },
       {
+        path: '/map-data',
+        name: 'MapData',
+        component: MapData,
+        meta: {
+          title: 'map数据',
+          requiresAuth: true
+        }
+      },
+      {
         path: '/settings',
         name: 'Settings',
         component: Settings,
@@ -70,6 +80,10 @@ const routes = [
           title: '系统设置',
           requiresAuth: true
         }
+      },
+      {
+        path: '/users',
+        redirect: '/dashboard'
       }
     ]
   }
@@ -92,7 +106,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (to.path === '/login' && authStore.isAuthenticated()) {
-      next('/users') // 跳转到客户管理页面
+      next('/dashboard') // 跳转到仪表板页面
     } else {
       next()
     }

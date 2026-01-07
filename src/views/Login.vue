@@ -100,8 +100,8 @@ const handleLogin = async () => {
     
     message.success('登录成功')
     
-    // 跳转到客户管理页面
-    router.push('/users')
+    // 跳转到仪表板页面
+    router.push('/dashboard')
   } catch (error) {
     if (error.errorFields) {
       return
